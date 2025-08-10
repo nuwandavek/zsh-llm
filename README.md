@@ -2,6 +2,8 @@
 
 A lightweight zsh widget that lets you query LLMs directly from your command line. Press `Ctrl+K` to get command suggestions from AI.
 
+![demo](/demo.gif)
+
 ## Installation
 
 ```bash
