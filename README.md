@@ -5,7 +5,7 @@ A lightweight zsh widget that lets you query LLMs directly from your command lin
 ## Installation
 
 ```bash
-curl -sL https://raw.githubusercontent.com/nuwandavek/zsh-llm/main/install.sh | sh
+curl -sL https://raw.githubusercontent.com/nuwandavek/zsh-llm/refs/heads/master/install.sh | sh
 ```
 
 Then:

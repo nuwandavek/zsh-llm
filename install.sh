@@ -5,7 +5,7 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 mkdir -p ~/.config/zsh-llm
-curl -sL https://raw.githubusercontent.com/nuwandavek/zsh-llm/main/llm-query -o ~/.config/zsh-llm/llm-query
+curl -sL https://raw.githubusercontent.com/nuwandavek/zsh-llm/refs/heads/master/llm-query -o ~/.config/zsh-llm/llm-query
 chmod +x ~/.config/zsh-llm/llm-query
 echo "source ~/.config/zsh-llm/llm-query" >> ~/.zshrc
 
