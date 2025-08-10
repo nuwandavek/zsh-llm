@@ -21,6 +21,9 @@ llm-query-widget() {
     CURSOR=0
     zle -R
     printf "Querying LLM...\n"
+
+    local escaped_query=$(printf '%s' "$query" | sed 's/\\/\\\\/g; s/"/\\"/g; s/$/\\n/g' | tr -d '\n' | sed 's/\\n$//')
+
     
     local response=$(curl -s -X POST \
         "${ZSH_LLM_API_URL:-https://api.openai.com/v1/chat/completions}" \
@@ -30,7 +33,7 @@ llm-query-widget() {
             \"model\": \"${ZSH_LLM_MODEL:-gpt-4.1}\",
             \"messages\": [
                 {\"role\": \"system\", \"content\": \"You are a helpful cmdline assistant. Give a single line command to be executed based on the user's query. No explanation, comments or anything else. If you just want to talk, use echo '<some text>' cmd to talk.\"},
-                {\"role\": \"user\", \"content\": \"$query\"}
+                {\"role\": \"user\", \"content\": \"$escaped_query\"}
             ],
             \"max_tokens\": ${ZSH_LLM_MAX_TOKENS:-1000},
             \"temperature\": ${ZSH_LLM_TEMPERATURE:-0.7}
