@@ -1,0 +1,47 @@
+#!/usr/bin/env zsh
+
+llm-query-widget() {
+    local original_buffer="$BUFFER"
+    local query
+    
+    BUFFER="Enter your q (and press enter): $original_buffer"
+    CURSOR=${#BUFFER}
+    
+    zle recursive-edit
+    query="${BUFFER##*: }"
+
+    if [[ -z "$query" ]]; then
+        BUFFER="$original_buffer"
+        CURSOR=${#BUFFER}
+        zle redisplay
+        return
+    fi
+    
+    BUFFER=""
+    CURSOR=0
+    zle -R
+    printf "Querying LLM...\n"
+    
+    local response=$(curl -s -X POST \
+        "${ZSH_LLM_API_URL:-https://api.openai.com/v1/chat/completions}" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${ZSH_LLM_API_KEY:-$OPENAI_API_KEY}" \
+        -d "{
+            \"model\": \"${ZSH_LLM_MODEL:-gpt-4.1}\",
+            \"messages\": [
+                {\"role\": \"system\", \"content\": \"You are a helpful cmdline assistant. Give a single line command to be executed based on the user's query. No explanation, comments or anything else. If you just want to talk, use echo '<some text>' cmd to talk.\"},
+                {\"role\": \"user\", \"content\": \"$query\"}
+            ],
+            \"max_tokens\": ${ZSH_LLM_MAX_TOKENS:-1000},
+            \"temperature\": ${ZSH_LLM_TEMPERATURE:-0.7}
+        }" 2>/dev/null)
+    
+    local content=$(echo "$response" | jq -r '.choices[0].message.content // empty' 2>/dev/null)
+    BUFFER="$content"
+    
+    CURSOR=${#BUFFER}
+    zle redisplay
+}
+
+zle -N llm-query-widget
+bindkey '^K' llm-query-widget
